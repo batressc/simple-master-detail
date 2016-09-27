@@ -1,0 +1,17 @@
+{
+  "name": "simple-master-detail",
+  "description": "Maestro-Detalle simple",
+  "main": "",
+  "authors": [
+    "Luis Gustavo Fernández Batres <elclon_fernanbrans@hotmail.com>"
+  ],
+  "license": "ISC",
+  "homepage": "",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ]
+}
