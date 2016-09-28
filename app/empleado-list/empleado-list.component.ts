@@ -1,6 +1,9 @@
 import { Component } from '@angular/core';
+import { Router } from '@angular/router';
+
 import { Empleado } from '../shared/model/empleado.entity';
 import { EMPLEADO_LIST } from '../shared/mocks/data.mock';
+import { MockDataService } from '../shared/services/mock-data.service';
 
 @Component({
     selector: 'ba3-empleado-list',
@@ -11,13 +14,13 @@ class EmpleadoListComponent {
     empleados: Array<Empleado>;
     empleado: Empleado;
 
-    constructor() {
-        this.empleados = EMPLEADO_LIST;
+    constructor(private mockdata: MockDataService, private router: Router) {
+        this.empleados = mockdata.getEmpleados();
         this.empleado = null;
     }
 
     selectEmpleado(empleado: Empleado) {
-        this.empleado = empleado;
+        this.router.navigate(['/empleado', empleado.id])
     }
 }
 
