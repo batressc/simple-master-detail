@@ -1,0 +1,22 @@
+<table>
+    <caption>Mantenimiento de Empleados</caption>
+    <thead>
+        <tr>
+            <td>DUI</td>
+            <td>Nombre completo</td>
+            <td>Fecha nacimiento</td>
+            <td>Sexo</td>
+        </tr>
+    </thead>
+    <tbody>
+        <tr *ngFor="let emp of empleados" (click)="selectEmpleado(emp)">
+            <td>{{ emp.dui }}</td>
+            <td>{{ emp.nombre }} {{ emp.apellido }}</td>
+            <td>{{ emp.fechaNacimiento }}</td>
+            <td>{{ emp.sexo === 0 ? 'masculino' : 'femenino' }}</td>
+        </tr>
+    </tbody>
+</table>
+<br />
+<br />
+<empleado-detail [empleado]="empleado"></empleado-detail>

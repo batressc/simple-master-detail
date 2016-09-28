@@ -21,7 +21,8 @@
       // other libraries
       'rxjs': 'npm:rxjs',
       'angular2-in-memory-web-api': 'npm:angular2-in-memory-web-api',
-      'modernizr': 'npm:modernizr/dist/modernizr.js'
+      'modernizr': 'npm:modernizr/dist/modernizr.js',
+      'moment': 'npm:moment/moment.js'
     },
     // packages tells the System loader how to load when no filename and/or no extension
     packages: {
@@ -37,6 +38,9 @@
         defaultExtension: 'js'
       },
       'modernizr': {
+        defaultExtension: 'js'
+      },
+      'moment': {
         defaultExtension: 'js'
       }
     }

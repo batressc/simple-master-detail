@@ -1,0 +1,46 @@
+<div *ngIf="empleado">
+    <h3>Datos personales</h3>
+    <label>ID interno</label>
+    <br />
+    <input type="text" [(ngModel)]="empleado.id" />
+    <br />
+    <label>DUI</label>
+    <br />
+    <input type="text" [(ngModel)]="empleado.dui" />
+    <br />
+    <label>Nombres</label>
+    <br />
+    <input type="text" [(ngModel)]="empleado.nombre" />
+    <br />
+    <label>Apellidos</label>
+    <br />
+    <input type="text" [(ngModel)]="empleado.apellidos" />
+    <br />
+    <label>Sexo</label>
+    <br />
+    <select [(ngModel)]="empleado.sexo">
+        <option value="0">masculino</option>
+        <option value="1">femenino</option>
+    </select>
+    <br />
+    <label>Fecha nacimiento</label>
+    <br />
+    <input type="text" [(ngModel)]="empleado.fechaNacimiento" />
+    <br />
+    <div *ngIf="empleado.residencia">
+        <h3>Dirección</h3>
+        <label>Ubicación</label>
+        <br />
+        <input type="text" [(ngModel)]="empleado.residencia.linea1" />
+        <br />
+        <input type="text" [(ngModel)]="empleado.residencia.linea2" />
+        <br />
+        <label>Departamento</label>
+        <br />
+        <input type="text" [(ngModel)]="empleado.residencia.departamento" />
+        <br />
+        <label>Municipio</label>
+        <br />
+        <input type="text" [(ngModel)]="empleado.residencia.municipio" />
+    </div>
+</div>
