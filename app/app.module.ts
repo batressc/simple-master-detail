@@ -7,12 +7,13 @@ import { AppComponent } from './app.component';
 import { EmpleadoListComponent } from './empleado-list/empleado-list.component';
 import { EmpleadoDetailComponent } from './empleado-detail/empleado-detail.component';
 import { MockDataService } from './shared/services/mock-data.service';
+import { IndexedDBService } from './shared/services/indexeddb.service';
 
 
 @NgModule({
     imports: [BrowserModule, FormsModule, routing],
     declarations: [AppComponent, EmpleadoListComponent, EmpleadoDetailComponent],
-    providers: [appRoutingProviders, MockDataService],
+    providers: [appRoutingProviders, MockDataService, IndexedDBService],
     bootstrap: [AppComponent]
 })
 class AppModule { }
