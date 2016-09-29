@@ -16,7 +16,7 @@
     <br />
     <label>Apellidos</label>
     <br />
-    <input type="text" [(ngModel)]="empleado.apellidos" />
+    <input type="text" [(ngModel)]="empleado.apellido" />
     <br />
     <label>Sexo</label>
     <br />
@@ -28,21 +28,4 @@
     <label>Fecha nacimiento</label>
     <br />
     <input type="text" [(ngModel)]="empleado.fechaNacimiento" />
-    <br />
-    <div *ngIf="empleado.residencia">
-        <h3>Dirección</h3>
-        <label>Ubicación</label>
-        <br />
-        <input type="text" [(ngModel)]="empleado.residencia.linea1" />
-        <br />
-        <input type="text" [(ngModel)]="empleado.residencia.linea2" />
-        <br />
-        <label>Departamento</label>
-        <br />
-        <input type="text" [(ngModel)]="empleado.residencia.departamento" />
-        <br />
-        <label>Municipio</label>
-        <br />
-        <input type="text" [(ngModel)]="empleado.residencia.municipio" />
-    </div>
 </div>

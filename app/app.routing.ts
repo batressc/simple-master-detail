@@ -5,6 +5,7 @@ import { EmpleadoListComponent } from './empleado-list/empleado-list.component';
 import { EmpleadoDetailComponent } from './empleado-detail/empleado-detail.component';
 
 const appRoutes: Routes = [
+    { path: '', component: EmpleadoListComponent },
     { path: 'empleados', component: EmpleadoListComponent },
     { path: 'empleado/:id', component: EmpleadoDetailComponent }
 ];
