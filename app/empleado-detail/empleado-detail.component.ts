@@ -2,7 +2,8 @@ import { Component, Input, OnInit } from '@angular/core';
 import { ActivatedRoute, Params } from '@angular/router';
 
 import { Empleado } from '../shared/model/empleado.entity';
-import { MockDataService } from '../shared/services/mock-data.service';
+import { IndexedDBService } from '../shared/services/indexeddb.service';
+
 
 @Component({
     selector: 'empleado-detail',
@@ -13,12 +14,17 @@ class EmpleadoDetailComponent implements OnInit {
     @Input()
     empleado: Empleado;
 
-    constructor(private route: ActivatedRoute, private mockdata: MockDataService) { }
+    constructor(private route: ActivatedRoute, private idbservice: IndexedDBService) { }
 
     ngOnInit(): void {
         this.route.params.forEach((params: Params) => {
             let id: string = params['id'];
-            this.empleado = this.mockdata.getEmpleadoById(id);
+            this.idbservice.selectById(id)
+                .then(result => this.empleado = result)
+                .catch(error => {
+                    console.log(error);
+                    this.empleado = null;
+                })
         });
     }
 }

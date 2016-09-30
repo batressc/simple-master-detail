@@ -7,7 +7,8 @@ import { EmpleadoDetailComponent } from './empleado-detail/empleado-detail.compo
 const appRoutes: Routes = [
     { path: '', component: EmpleadoListComponent },
     { path: 'empleados', component: EmpleadoListComponent },
-    { path: 'empleado/:id', component: EmpleadoDetailComponent }
+    { path: 'empleado/:id', component: EmpleadoDetailComponent },
+    { path: 'empleado/nuevo', component: EmpleadoDetailComponent }
 ];
 
 const appRoutingProviders: any[] = [];

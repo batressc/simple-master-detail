@@ -84,22 +84,182 @@ class IndexedDBService {
     }
 
     /** Permite agregar un empleado */
-    add(value: Empleado) {
+    add(value: Empleado): Promise<Empleado> {
         return new Promise<Empleado>((resolve, reject) => {
+            let operationResult: boolean = false;
+
             if (this.db) {
                 let transaction: IDBTransaction = this.db.transaction('Empleado', 'readwrite');
                 let store: IDBObjectStore = transaction.objectStore('Empleado');
                 let request: IDBRequest = store.add(value);
 
+                transaction.onabort = (ev: Event) => reject(null);
+
+                transaction.onerror = (eev: ErrorEvent) => reject(null);
+
+                transaction.oncomplete = (ev: Event) => {
+                    if (operationResult) resolve(value);
+                    else reject(null);
+                };
+
                 request.onsuccess = (event: Event) => {
-                    console.log(event);
-                    resolve(value);
+                    operationResult = true;
                 };
 
                 request.onerror = (error: ErrorEvent) => {
-                    console.error(error);
+                    operationResult = false;
+                };
+            } else {
+                reject(null);
+            }
+        });
+    }
+
+    /** Permite borrar un empleado */
+    delete(value: Empleado): Promise<Empleado> {
+        return new Promise<Empleado>((resolve, reject) => {
+            let operationResult: boolean = false;
+            
+            if (this.db) {
+                let transaction: IDBTransaction = this.db.transaction('Empleado', 'readwrite');
+                let store: IDBObjectStore = transaction.objectStore('Empleado');
+                let request: IDBRequest = store.delete(value.id);
+
+                transaction.onabort = (ev: Event) => reject(null);
+
+                transaction.onerror = (eev: ErrorEvent) => reject(null);
+
+                transaction.oncomplete = (ev: Event) => {
+                    if (operationResult) resolve(value);
+                    else reject(null);
+                };
+
+                request.onsuccess = (event: Event) => {
+                    operationResult = true;
+                };
+
+                request.onerror = (error: ErrorEvent) => {
+                    operationResult = false;
+                };
+            } else {
+                reject(null);
+            }
+        });
+    }
+
+    /** Recupera un empleado por su ID */
+    update(value: Empleado): Promise<Empleado> {
+        return new Promise<Empleado>((resolve, reject) => {
+            let operationGet: Empleado = null;
+            let operationResult: boolean = false;
+            
+            if (this.db) {
+                let transaction: IDBTransaction = this.db.transaction('Empleado', 'readonly');
+                let store: IDBObjectStore = transaction.objectStore('Empleado');
+                let request: IDBRequest = store.get(value.id);
+
+                transaction.onabort = (ev: Event) => reject(null);
+
+                transaction.onerror = (eev: ErrorEvent) => reject(null);
+
+                transaction.oncomplete = (ev: Event) => {
+                    if (operationResult) resolve(value);
+                    else reject(null);
+                };
+
+                request.onsuccess = (event: Event) => {
+                    operationGet = request.result;
+                    if (operationGet) {
+                        for (let property in operationGet) {
+                            if (operationGet.hasOwnProperty(property) && property != 'id') {
+                                operationGet[property] = value[property]; 
+                            }   
+                        }
+                        let requestUpdate: IDBRequest = store.put(operationGet);
+
+                        requestUpdate.onsuccess = (ev: Event) => {
+                            operationResult = true;
+                        };
+
+                        requestUpdate.onerror = (eev: ErrorEvent) => {
+                            operationResult = false;
+                        };
+                    }
+                };
+
+                request.onerror = (error: ErrorEvent) => {
+                    operationResult = false;
+                };
+            } else {
+                reject(null);
+            }
+        });
+    }
+
+    /** Recupera un empleado por su ID */
+    selectById(id: string): Promise<Empleado> {
+        return new Promise<Empleado>((resolve, reject) => {
+            let operationResult: Empleado = null;
+            
+            if (this.db) {
+                let transaction: IDBTransaction = this.db.transaction('Empleado', 'readonly');
+                let store: IDBObjectStore = transaction.objectStore('Empleado');
+                let request: IDBRequest = store.get(id);
+
+                transaction.onabort = (ev: Event) => reject(null);
+
+                transaction.onerror = (eev: ErrorEvent) => reject(null);
+
+                transaction.oncomplete = (ev: Event) => {
+                    if (operationResult) resolve(operationResult);
+                    else reject(null);
+                };
+
+                request.onsuccess = (event: Event) => {
+                    operationResult = request.result;
+                };
+
+                request.onerror = (error: ErrorEvent) => {
+                    operationResult = null;
+                };
+            } else {
+                reject(null);
+            }
+        });
+    }
+
+    /** Recupera todos los elementos del DataStore */
+    selectAll(returnPartial: boolean = true): Promise<Array<Empleado>> {
+        return new Promise<Array<Empleado>>((resolve, reject) => {
+            let operationResult: Array<Empleado> = [];
+            
+            if (this.db) {
+                let transaction: IDBTransaction = this.db.transaction('Empleado', 'readonly');
+                let store: IDBObjectStore = transaction.objectStore('Empleado');
+                let request: IDBRequest = store.openCursor();
+
+                transaction.onabort = (ev: Event) => reject(null);
+
+                transaction.onerror = (eev: ErrorEvent) => reject(null);
+
+                transaction.oncomplete = (ev: Event) => {
+                    if (operationResult) resolve(operationResult);
+                    else reject(null);
+                };
+
+                request.onsuccess = (event: any) => {
+                    let cursor: IDBCursorWithValue = event.target.result;
+                    if (cursor) {
+                        operationResult.push(cursor.value);
+                        cursor.continue();
+                    } 
+                    operationResult = request.result;
+                };
+
+                request.onerror = (error: ErrorEvent) => {
+                    if (returnPartial) reject(operationResult)
                     reject(null);
-                }
+                };
             } else {
                 reject(null);
             }
