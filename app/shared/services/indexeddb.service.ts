@@ -1,13 +1,18 @@
 import { Injectable } from '@angular/core';
 
+import { Empleado } from '../model/empleado.entity';
 import 'modernizr';
 
 /** Indica los status controlados de eventos de indexedDB */
 enum IndexedDBStatus {
     /** No soportado */
     NOT_SUPPORTED,
+    /** No se ha generado la estructura del DataStore */
+    NOT_STRUCTURED,
     /** Exito */
     SUCCESS,
+    /** DataStore bloqueado */
+    BLOCKED,
     /** Error */
     FAIL
 }
@@ -17,77 +22,88 @@ class IndexedDBService {
     private idb: IDBOpenDBRequest;
     private db: IDBDatabase;
     private idbName: string;
+    private idbVersion: number;
 
     constructor() { 
         this.idbName = 'ba3-simple-master-detail';
+        this.idbVersion = 1;
     }
 
-    /** Permite inicializar la base de datos IndexedDB o indicar que no es soportada */
+    /** Crea la estructura del DataStore */
+    private generateStructure(): Promise<boolean> {
+        return new Promise<boolean>((resolve, reject) => {
+            if (this.db) {
+                let obEmpleado = this.db.createObjectStore('Empleado', { keyPath: 'id' });
+                obEmpleado.createIndex('idx_Empleado_dui', 'dui', { unique: true });
+                obEmpleado.createIndex('idx_Empleado_name', 'nombre', { unique: false });
+                obEmpleado.createIndex('idx_Empleado_apellido', 'apellido', { unique: false });
+                resolve(true);
+
+                this.db.onerror = (event: Event) => reject(false);
+            } else reject(false);
+        });
+    }
+
+    /** Verifica si la estructura del DataStore es correcta */
+    private validateStructure(): boolean {
+        if (this.db) {
+            if (this.db.objectStoreNames.contains('Empleado')) return true;
+            else return false;
+        } else return false;
+    }
+
+    /** Permite inicializar el DataStore IndexedDB o indicar que no es soportada */
     initializeIDB(): Promise<IndexedDBStatus> {
         return new Promise<IndexedDBStatus>((resolve, reject) => {
             if (Modernizr.indexeddb) {
-                this.idb = indexedDB.open(this.idbName);
+                this.idb = indexedDB.open(this.idbName, this.idbVersion);
                 
                 this.idb.onsuccess = (event: any) => {
                     this.db = <IDBDatabase>event.target.result;
-                    console.log(`DataStore "${this.db.name}" creado exitosamente`);
+                    if (this.validateStructure()) resolve(IndexedDBStatus.SUCCESS);
+                    else reject(IndexedDBStatus.NOT_STRUCTURED);
                 };
 
-                this.idb.onerror = (event: Event) => {
-                    if (!this.idb) console.error('No se puedo acceder a la base de datos');
-                    else console.error('No se pudo generar la base de datos');
-                    reject(IndexedDBStatus.FAIL);
-                };
+                this.idb.onerror = (event: ErrorEvent) => reject(IndexedDBStatus.FAIL);
 
-                this.idb.onblocked = (event: Event) => {
-                    console.log('bloqueada');
-                    console.log(event);
-                };
+                this.idb.onblocked = (event: Event) => reject(IndexedDBStatus.BLOCKED);
 
-                this.idb.onupgradeneeded = (event: Event) => {
+                this.idb.onupgradeneeded = (event: any) => {
+                    this.db = <IDBDatabase>event.target.result;
                     this.generateStructure()
                         .then(result => {
-                            if (result) {
-                                console.log(`Estructura del DataStore "${this.db.name}" generada exitosamente`);
-                                resolve(IndexedDBStatus.SUCCESS);
-                            } else {
-                                console.error(`No se pudo generar la estructura del DataStore "${this.db.name}". Favor borrarla de forma manual`);
-                                reject(IndexedDBStatus.FAIL);
-                            }
+                            if (result) resolve(IndexedDBStatus.SUCCESS);
+                            else reject(IndexedDBStatus.NOT_STRUCTURED);
                         })
+                        .catch(error => reject(IndexedDBStatus.NOT_STRUCTURED));
                 };
             } else {
-                console.log('IndexedDB no es soportado en el navegador');
                 reject(IndexedDBStatus.NOT_SUPPORTED);
             }
         });
     }
 
-    /** Crea la estructura de datos de la base de datos */
-    private generateStructure(): Promise<boolean> {
-        return new Promise((resolve, reject) => {
-            debugger;
+    /** Permite agregar un empleado */
+    add(value: Empleado) {
+        return new Promise<Empleado>((resolve, reject) => {
             if (this.db) {
-                let obEmpleado = this.db.createObjectStore('Empleado', { keyPath: 'id' });
-                obEmpleado.createIndex('idx_Empleado_dui', 'dui', { unique: true });
-                obEmpleado.createIndex('idx_Empleado_name', 'name', { unique: false });
-                obEmpleado.createIndex('idx_Empleado_apellido', 'apellido', { unique: false });
-                resolve(true);
+                let transaction: IDBTransaction = this.db.transaction('Empleado', 'readwrite');
+                let store: IDBObjectStore = transaction.objectStore('Empleado');
+                let request: IDBRequest = store.add(value);
 
-                this.db.onerror = (event: Event) => {
-                    debugger;
-                    reject(false);
+                request.onsuccess = (event: Event) => {
+                    console.log(event);
+                    resolve(value);
                 };
+
+                request.onerror = (error: ErrorEvent) => {
+                    console.error(error);
+                    reject(null);
+                }
             } else {
-                console.error(`No hay un DataStore disponible para generar su estructura`);
-                reject(false);
+                reject(null);
             }
         });
-    }
-
-    /** Verifica si la estructura de la base de datos es correcta (cuando solo se abre la base) */
-    private validateStructure(): Promise<boolean> {
-        return Promise.resolve(true);
     }
 }
 
