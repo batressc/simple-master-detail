@@ -83,6 +83,12 @@ class IndexedDBService {
         });
     }
 
+    /** Indica si el DataStore esta listo para usarse */
+    isValid(): boolean {
+        if (this.db) return true;
+        else return false;
+    }
+
     /** Permite agregar un empleado */
     add(value: Empleado): Promise<Empleado> {
         return new Promise<Empleado>((resolve, reject) => {
@@ -154,7 +160,7 @@ class IndexedDBService {
             let operationResult: boolean = false;
             
             if (this.db) {
-                let transaction: IDBTransaction = this.db.transaction('Empleado', 'readonly');
+                let transaction: IDBTransaction = this.db.transaction('Empleado', 'readwrite');
                 let store: IDBObjectStore = transaction.objectStore('Empleado');
                 let request: IDBRequest = store.get(value.id);
 
@@ -253,7 +259,6 @@ class IndexedDBService {
                         operationResult.push(cursor.value);
                         cursor.continue();
                     } 
-                    operationResult = request.result;
                 };
 
                 request.onerror = (error: ErrorEvent) => {

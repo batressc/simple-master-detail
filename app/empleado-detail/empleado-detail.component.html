@@ -1,10 +1,10 @@
-<div *ngIf="empleado">
+<div *ngIf="empleado || isNew">
     <a routerLink="/empleados" routerLinkActive="active">Atrás</a>
     <br />
     <h3>Datos personales</h3>
     <label>ID interno</label>
     <br />
-    <input type="text" [(ngModel)]="empleado.id" />
+    <input type="text" [(ngModel)]="empleado.id" [attr.disabled]="isNew === true ? null : true"  />
     <br />
     <label>DUI</label>
     <br />
@@ -27,5 +27,9 @@
     <br />
     <label>Fecha nacimiento</label>
     <br />
-    <input type="text" [(ngModel)]="empleado.fechaNacimiento" />
+    <input type="date" [(ngModel)]="empleado.fechaNacimiento" />
+    <br />
+    <br />
+    <button (click)="guardar()">Guardar</button>
+    <button (click)="eliminar()">Eliminar</button>
 </div>

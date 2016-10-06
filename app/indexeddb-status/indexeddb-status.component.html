@@ -1,0 +1,8 @@
+<div>
+    <img [src]="imageUrl" [alt]="status" >
+    <br />
+    <label>{{ status }}</label>
+    <br />
+    <br />
+    <button (click)="initializeDataStore()" *ngIf="showRetry" [attr.disabled]="inProcess === true ? true : null">Reintentar</button>
+</div>
