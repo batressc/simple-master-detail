@@ -55,13 +55,17 @@ class IndexedDBService {
     /** Permite inicializar el DataStore IndexedDB o indicar que no es soportada */
     initializeIDB(): Promise<IndexedDBStatus> {
         return new Promise<IndexedDBStatus>((resolve, reject) => {
+            let resStructure = IndexedDBStatus.SUCCESS;
+            
             if (Modernizr.indexeddb) {
                 this.idb = indexedDB.open(this.idbName, this.idbVersion);
                 
                 this.idb.onsuccess = (event: any) => {
                     this.db = <IDBDatabase>event.target.result;
-                    if (this.validateStructure()) resolve(IndexedDBStatus.SUCCESS);
-                    else reject(IndexedDBStatus.NOT_STRUCTURED);
+                    if (resStructure === IndexedDBStatus.SUCCESS) {
+                        if (this.validateStructure()) resolve(IndexedDBStatus.SUCCESS);
+                        else reject(IndexedDBStatus.NOT_STRUCTURED);
+                    } else reject(IndexedDBStatus.NOT_STRUCTURED);
                 };
 
                 this.idb.onerror = (event: ErrorEvent) => reject(IndexedDBStatus.FAIL);
@@ -72,8 +76,8 @@ class IndexedDBService {
                     this.db = <IDBDatabase>event.target.result;
                     this.generateStructure()
                         .then(result => {
-                            if (result) resolve(IndexedDBStatus.SUCCESS);
-                            else reject(IndexedDBStatus.NOT_STRUCTURED);
+                            if (result) resStructure = IndexedDBStatus.SUCCESS;
+                            else resStructure = IndexedDBStatus.NOT_STRUCTURED;
                         })
                         .catch(error => reject(IndexedDBStatus.NOT_STRUCTURED));
                 };
