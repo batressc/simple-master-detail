@@ -6,9 +6,10 @@ import { EMPLEADO_LIST } from '../shared/mocks/data.mock';
 import { IndexedDBService } from '../shared/services/indexeddb.service';
 
 @Component({
+    moduleId: module.id,
     selector: 'ba3-empleado-list',
-    templateUrl: 'app/empleado-list/empleado-list.component.html',
-    styleUrls: ['app/empleado-list/empleado-list.component.css']
+    templateUrl: 'empleado-list.component.html',
+    styleUrls: ['empleado-list.component.css']
 })
 class EmpleadoListComponent implements OnInit {
     empleados: Array<Empleado>;
@@ -24,11 +25,11 @@ class EmpleadoListComponent implements OnInit {
     }
 
     selectEmpleado(empleado: Empleado) {
-        this.router.navigate(['/empleado', empleado.id])
+        this.router.navigate(['empleado', empleado.id])
     }
 
     agregarEmpleado(): void {
-        this.router.navigate(['/empleado/nuevo']);
+        this.router.navigate(['empleado/nuevo']);
     }
 
     cargarDatos(): void {

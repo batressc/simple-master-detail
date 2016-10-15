@@ -7,7 +7,7 @@ import { IndexedDBStatusComponent } from './indexeddb-status/indexeddb-status.co
 import { IndexedDBGuard } from './app.routing.guard';
 
 const appRoutes: Routes = [
-    { path: '', component: EmpleadoListComponent, canActivate: [IndexedDBGuard] },
+    { path: '', redirectTo: 'empleados', pathMatch: 'full' },
     { path: 'empleados', component: EmpleadoListComponent, canActivate: [IndexedDBGuard] },
     { path: 'empleado/:id', component: EmpleadoDetailComponent, canActivate: [IndexedDBGuard] },
     { path: 'datastore', component: IndexedDBStatusComponent},

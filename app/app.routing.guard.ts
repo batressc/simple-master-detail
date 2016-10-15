@@ -10,7 +10,7 @@ class IndexedDBGuard implements CanActivate {
     canActivate(next: ActivatedRouteSnapshot, state: RouterStateSnapshot) {
         if (this.idbservice.isValid()) return true;
         else {
-            this.router.navigate(['/datastore'], { skipLocationChange: true });
+            this.router.navigate(['datastore'], { skipLocationChange: true });
             return false;
         }
     }

@@ -6,9 +6,10 @@ import { IndexedDBService } from '../shared/services/indexeddb.service';
 import * as moment from 'moment';
 
 @Component({
+    moduleId: module.id,
     selector: 'empleado-detail',
-    templateUrl: 'app/empleado-detail/empleado-detail.component.html',
-    styleUrls: ['app/empleado-detail/empleado-detail.component.css']
+    templateUrl: 'empleado-detail.component.html',
+    styleUrls: ['empleado-detail.component.css']
 })
 class EmpleadoDetailComponent implements OnInit {
     @Input()
@@ -40,7 +41,7 @@ class EmpleadoDetailComponent implements OnInit {
         this.idbservice.add(this.empleado)
             .then(result => {
                 if (result) {
-                    this.router.navigate(['/empleados']);
+                    this.router.navigate(['empleados']);
                 }
             });
     }
@@ -49,7 +50,7 @@ class EmpleadoDetailComponent implements OnInit {
         this.idbservice.update(this.empleado)
             .then(result => {
                 if (result) {
-                    this.router.navigate(['/empleados']);
+                    this.router.navigate(['empleados']);
                 }
             });
     }
@@ -63,7 +64,7 @@ class EmpleadoDetailComponent implements OnInit {
         this.idbservice.delete(this.empleado)
             .then(result => {
                 if (result) {
-                    this.router.navigate(['/empleados']);
+                    this.router.navigate(['empleados']);
                 }
             });
     }
